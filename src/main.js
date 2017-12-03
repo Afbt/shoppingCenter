@@ -24,6 +24,7 @@ import payamount from './components/account/payamount.vue'
 import paymentSuccess from './components/account/paymentSuccess.vue'
 import memberCenter from './components/account/memberCenter.vue'
 import memberOrderlist from './components/account/memberOrderlist.vue'
+import getorderdetial from './components/account/getorderdetial.vue'
 // 路由规则
 var router = new VueRouter({
     routes: [
@@ -99,10 +100,17 @@ var router = new VueRouter({
                     meta: {
                         checklogin: true
                     }
-                }, {
+                }, { //订单页面
                     name: 'memberOrderlist',
                     path: 'memberOrderlist',
                     component: memberOrderlist,
+                    meta: {
+                        checklogin: true
+                    }
+                }, {//订单详情
+                    name: 'getorderdetial',
+                    path: 'getorderdetial/:ids',
+                    component: getorderdetial,
                     meta: {
                         checklogin: true
                     }
@@ -186,17 +194,19 @@ router.beforeEach((to, from, next) => {
 import vuex from 'vuex'
 Vue.use(vuex)
 
-import {setItem} from './globalCommunication/localStorageBaseDao.js'
+import {
+    setItem
+} from './globalCommunication/localStorageBaseDao.js'
 // 定义四个核心对象
 // 1.定义个全局属性
 // this.$store.state.buyCount
 var state = {
-    buyCount = 0
+    buyCount: 0
 }
 // 这个里面的方法要通过actions中的方法来触发
 var mutations = {
-    // 2.定义changeCount方法来改变state中buyCount的值
-    // 两个参数  1：state:代表上面定义好的state对象 2.goodSobj:代表程序员调用时传入的 
+    //     // 2.定义changeCount方法来改变state中buyCount的值
+    //     // 两个参数  1：state:代表上面定义好的state对象 2.goodSobj:代表程序员调用时传入的 
     changeCount(state, goodSobj) {
         state.buyCount += goodSobj
         setItem(goodSobj);
@@ -204,13 +214,12 @@ var mutations = {
 }
 // actions外部编写方式 this.$store.dispatch('actions定义好的方法',传入的参数)
 var actions = {
-    // 定义changeCount方法用来触发mutations中的某个方法
+    //     // 定义changeCount方法用来触发mutations中的某个方法
 
     changeCount({
         commit
     }, goodSobj) {
-        
-        commit('changeCount',goodSobj)
+        commit('changeCount', goodSobj)
     }
 }
 
@@ -218,7 +227,10 @@ var getters = {}
 
 // 上面四个对象 利用new vuex.Store()进行实例化
 var store = new vuex.Store({
-    state,mutations,actions,getters
+    state,
+    mutations,
+    actions,
+    getters
 })
 
 

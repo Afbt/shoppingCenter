@@ -91,23 +91,24 @@
                             <th width="10%">状态</th>
                             <th width="12%">操作</th>
                           </tr>
-                          <tr>
-                            <td>BD20171025213815752</td>
-                            <td align="left">ivanyb1212</td>
+                          <tr v-for='item in orderCaptures.message'>
+                            <td>{{item.order_no}}</td>
+                            <td align="left">{{item.accept_name}}</td>
                             <td align="left">
-                              <strong style="color: red;">￥7220</strong>
+                              <strong style="color: red;">￥{{item.order_amount}}</strong>
                               <br> 在线支付
                             </td>
-                            <td align="left">2017-10-25 21:38:15</td>
+                            <td align="left">{{item.add_time|DatetimeES(item.add_time)}}</td>
                             <td align="left">
-                              待付款
+                              {{item.statusName}}
                             </td>
                             <td align="left">
-                              <a href="#/site/member/orderinfo/12" class="">查看订单</a>
+                              <router-link v-bind='{to:"/seit/getorderdetial/"+item.id}'>查看订单</router-link>
+                              
                               <br>
-                              <a href="#/site/goods/payment/12" class="">|去付款</a>
+                              <a v-if='item.status==1' href="#/site/goods/payment/12" class="">|去付款</a>
                               <br>
-                              <a href="javascript:void(0)">|取消</a>
+                              <router-link v-if='item.status==1||item.status==2' @click.native='cancel(item.id)' to='/seit/memberOrderlist' >|取消</router-link>
                               <br>
                             </td>
                           </tr>
@@ -202,9 +203,43 @@
 
 </template>
 <script>
+  export default {
+    data() {
+      return {
+        orderCaptures:[]
+      }
+    },
+    mounted(){
+      this.orderCapture()
+    },
+    methods:{
+      orderCapture(){//查询出订单数据
+        this.$ajax.get('/site/validate/order/userorderlist?pageIndex=1&pageSize=10')
+        .then(res=>{
+
+          // console.log(res);
+          this.orderCaptures = res.data
+        })
+      },
+      cancel(id){ //取消订单
+        this.$ajax.get("/site/validate/order/cancelorder/"+id)
+        .then(res=>{
+          // console.log(res.data.message);
+          if (res.data.status==1) {
+            this.$message.error(res.data.message)
+            return
+          }
+          this.$message.success(res.data.message)
+          this.orderCapture()
+        })
+        
+        
+      }
+    }
+  }
 </script>
 <style scoped>
-.sub-tit{
-  height: 80px;
-}
+  .sub-tit {
+    height: 80px;
+  }
 </style>

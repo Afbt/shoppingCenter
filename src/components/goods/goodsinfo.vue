@@ -317,8 +317,8 @@
           gid: id,
           add: this.buycont
         }
-        this.$store.dispatch('changeCount',goodSobj)
-        
+        // this.$store.dispatch('changeCount',goodSobj)
+        setItem(goodSobj);
         // console.log(goodSobj);
         // localStorage.setItem('goodSobj',1) //往localStorage加东西
         //按key清除所有localStorage里的东西
